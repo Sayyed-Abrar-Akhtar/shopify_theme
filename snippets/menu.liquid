@@ -1,0 +1,19 @@
+<div class="menu">
+  <ul class="menu__items">
+    {% for link in linklists[section.settings.mainMenu].links -%} {%- if
+    link.title == "Home" -%}
+
+    <li class="menu__list menu--active">
+      <a href="{{ link.url }}" class="menu__link">{{ link.title }}</a>
+    </li>
+    {%- else -%}
+
+    <li class="menu__list menu--kid">
+      <a href="{{ link.url }}" class="menu__link menu--dropdown">{{
+        link.title
+      }}</a>
+    </li>
+
+    {%- endif -%} {%- endfor -%}
+  </ul>
+</div>

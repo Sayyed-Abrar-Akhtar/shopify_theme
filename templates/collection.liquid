@@ -1,18 +1,93 @@
-{% paginate collection.products by 2 %}
-  <h1>{{ collection.title }}</h1>
-  {% for product in collection.products %}
-    <div>
-      <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
-      {{ product.price | money }}
-      {% unless product.available %}<br><strong>sold out</strong>{% endunless %}
-      <a href="{{ product.url | within: collection }}">
-        <img src="{{ product.featured_image.src | img_url: 'large' }}" alt="{{ product.featured_image.alt | escape }}">
-      </a>
-    </div>
-  {% else %}
-    <p>no matches</p>
-  {% endfor %}
+{%- paginate collection.products by 24 -%}
+  <!--<h1>{{ collection.title }}</h1>-->
+  <div class="product">
+    {%- for product in collection.products -%}   
+      {%- if product.available-%}     
+        {%- if product.options_by_name['Color'].values.size > 1 -%}               
+         {%- for image in product.images -%}
+          {%- for variant in product.variants -%}
+              {%- if image.src == variant.featured_image.src -%}
+                <!-----------------------products--------------------->
+                <a href="{{ product.url | within: collection }}" class="product__link" data-variant="{{variant.title | split: ' / ' | first}}"> 
+                <div class="product__list">
+                  <div class="product__image-box">
+                    {%- if variant.featured_image -%}
+                      <img src="{{ variant.featured_image | img_url: 'large' }}" alt="{{product.title}}" class="product__image" />
+                    {%- else -%}
+                          <!--image coming soon image-->
+                    {%- endif -%}
+                    {%- if product.images[image.position] -%}
+                      <img src="{{ product.images[image.position] | img_url: 'large' }}" alt="{{ product.title }}" class="product__image--second" />
+                    {%- else -%}
+                      <!--image coming soon image-->
+                    {%- endif -%}
+                    {%- if product.compare_at_price and product.price != product.compare_at_price -%}
+                      {%- assign price = product.price |divided_by: 100.0 -%}
+                      {%- assign comparedPrice = product.compare_at_price |divided_by: 100.0 -%}
+                      {%- assign discountPrice = price|divided_by: comparedPrice  -%}
+                      {%- assign discountPriceRounded = discountPrice | times: 100  | round -%}
+                      {%- assign discountProvided = 100 | minus: discountPriceRounded  -%}
+                      <div class="product__sticker">-{{ discountProvided }}%</div>
+                    {%- endif -%}
+                    <div class="product__badge">Newin</div>
+                  </div>
+                  <div class="product__details">
+                    <div class="product__title">{{ product.title }}</div>
+                    <div class="product__price">
+                      <div class="product__selling-price">{{ product.price | money }}</div>
+                      {%- if product.compare_at_price and product.price != product.compare_at_price -%}
+                        <div class="product__price--compared-at"><strike>{{ product.compare_at_price | money }}</strike></div>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </div>
+                </a> 
+                <!-----------------------products---------------------> 
+                {% break %} 
+              {%- else -%}   
+                {%- continue -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        {%- else -%}
+          <!-----------------------products--------------------->
+          <a href="{{ product.url | within: collection }}" class="product__link"> 
+          <div class="product__list">
+            <div class="product__image-box">
+              <img src="{{ product.featured_image.src | img_url: 'large' }}" alt="{{ product.title }}-image" class="product__image" />
+              <img src="{{ product.images[1].src | img_url: 'large' }}" alt="{{ product.title }}-image" class="product__image--second" />
+              {%- if product.compare_at_price and product.price != product.compare_at_price -%}
+                {%- assign price = product.price |divided_by: 100.0 -%}
+                {%- assign comparedPrice = product.compare_at_price |divided_by: 100.0 -%}
+                {%- assign discountPrice = price|divided_by: comparedPrice  -%}
+                {%- assign discountPriceRounded = discountPrice | times: 100  | round -%}
+                {%- assign discountProvided = 100 | minus: discountPriceRounded  -%}
+                <div class="product__sticker">-{{ discountProvided }}%</div>
+              {%- endif -%}
+              <div class="product__badge">Newin</div>
+            </div>
+            <div class="product__details">
+              <div class="product__title">{{ product.title }}</div>
+              <div class="product__price">
+                <div class="product__selling-price">{{ product.price | money }}</div>
+                {%- if product.compare_at_price and product.price != product.compare_at_price -%}
+                  <div class="product__price--compared-at"><strike>{{ product.compare_at_price | money }}</strike></div>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+          </a> 
+          <!-----------------------products---------------------> 
+        {%- endif -%}
+      {%- else -%}
+        <p>NO products found</p>
+      {%- endif -%}
+      
+    {% endfor %}
+  </div>
   {% if paginate.pages > 1 %}
     {{ paginate | default_pagination }}
   {% endif %}
 {% endpaginate %}
+
+

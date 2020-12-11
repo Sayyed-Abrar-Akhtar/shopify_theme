@@ -1,19 +1,73 @@
 <div class="menu">
   <ul class="menu__items">
-    {% for link in linklists[section.settings.mainMenu].links -%} {%- if
-    link.title == "Home" -%}
-
-    <li class="menu__list menu--active">
-      <a href="{{ link.url }}" class="menu__link">{{ link.title }}</a>
-    </li>
-    {%- else -%}
-
-    <li class="menu__list menu--kid">
-      <a href="{{ link.url }}" class="menu__link menu--dropdown">{{
-        link.title
-      }}</a>
-    </li>
-
-    {%- endif -%} {%- endfor -%}
+    {% for link in linklists[section.settings.mainmenu  ].links -%}
+      <li class="menu__list menu--{{link.title | downcase}}">
+        <a href="{{ link.url }}" class="menu__link menu--dropdown">{{ link.title }}</a>
+      </li>
+    {%- endfor -%}
   </ul>
 </div>
+
+
+
+
+{%- for block in section.blocks -%}
+{% assign className = block.settings.imgText | downcase %}
+
+{% liquid
+case className
+when "mens"
+  assign dropdownClass = 'men'
+when "shop mens"
+  assign dropdownClass = 'men'
+when "womens"
+  assign dropdownClass = 'women'
+when "shop women"
+  assign dropdownClass = 'women'
+when "outlet"
+  assign dropdownClass = 'sale'
+when "outlets"
+  assign dropdownClass = 'sale'
+when "shop outlet"
+  assign dropdownClass = 'sale'
+when "shop outlets"
+  assign dropdownClass = 'sale'
+else
+  assign dropdownClass = className
+endcase %}
+
+
+<div class="sub-menu sub-menu--{{dropdownClass}}">
+
+  <!---------------submenu--------------------->
+  <div class="sub-menu__content">
+
+    {% for submenu in linklists[block.settings.submenu].links %}
+      {%- for link in submenu.links -%}
+      <div class="sub-menu__box">
+        <ul class="sub-menu__items">
+          {%- for sublink in link.links -%}
+          <li class="sub-menu__list">
+            <a href="{{sublink.url}}" class="sub-menu__link">{{sublink.title}}</a>
+          </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+      {%- endfor -%}
+    {%- endfor -%}
+  </div>
+  <!---------------submenu-image--------------------->
+  <div class="sub-menu__photo-box">
+    <img
+      src="{{block.settings.img | img_url: '1024x' }}"
+      alt="menu image"
+      class="submenu__photo"
+    />
+    <a href="{{block.settings.imgLink}}" class="sub-menu__link">
+
+      shop {{className | replace: 'shop', ''}} &rarr;
+    </a>
+  </div>
+  <!----------------end-submenu------------------------->
+</div>
+{%- endfor -%}

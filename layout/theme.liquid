@@ -23,11 +23,12 @@
   </head>
   <body>
     <div class="contaner">
-      {%- section 'header' -%} {%- section 'nav' -%}
+      {%- section 'header' -%}
+      {%- section 'nav' -%}
+      {%- section 'notification-banner' -%}
       <main role="main">
         {{ content_for_layout }}
       </main>
-
       {%- section 'footer' -%}
     </div>
     {{ 'theme.js' | asset_url | script_tag }}

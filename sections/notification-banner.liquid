@@ -1,0 +1,34 @@
+<section class="notification">
+  <div class="notification__box">
+
+  {%- for block in section.blocks -%}
+    <div class="notification__content notification--{{notificationCount}}">
+      <p class="notification__text">{{block.settings.notification}}</p>
+    </div>
+
+  {%- endfor -%}
+
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "notification-banner",
+    "max_blocks": 3,
+    "settings": [],
+    "blocks": [
+      {
+        "name": "notification",
+        "type": "text",
+        "settings": [
+          {
+            "type": "text",
+            "id": "notification",
+            "label": "Notification Text"
+          }
+        ]
+      }
+    ]
+  }
+
+{% endschema%}

@@ -7,7 +7,60 @@
   </a>
 {% endfor %}
 <h1>{{ product.title }}</h1>
+
+
+
+    
 <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm">
+  
+    {%- for product_option in product.options_with_values -%}
+    
+      <!--<select data-variant = "{{ product_option.name }}" class="{{ product_option.name | downcase }}">-->
+        {% for value in product_option.values %}
+          {%- for variant in product.variants -%}
+            {%- assign req_variant = variant.title | split: ' / ' | first -%}
+            
+            {%- if value == req_variant -%}
+              
+              <img src="{{variant.featured_image | img_url: '100*100' }}" />
+              {% break %}
+              
+            {%- endif -%}            
+          {%- endfor -%}
+          {% comment %} <option {% if product_option.selected_value == value %}selected{% endif %} value="{{ value }}">
+            {{ value }}
+          </option> {% endcomment %}
+        {% endfor %}
+      <!--</select>-->
+    {%- endfor -%}
+    
+    
+  
+  
+  <select name="id" id="productSelect" class="original-variant-selector">
+    {% for variant in product.variants %}
+      {% if variant.available %}        
+        <option value="{{ variant.id }}" class="update-selected">
+          {{variant.title}}  - {{ variant.price | money_with_currency }}
+        </option>
+      {% else %}
+        <option disabled="disabled" class="update-selected">
+          {{ variant.title }} - sold out
+        </option>
+      {% endif %}
+    {% endfor %}
+  </select>
+  {{ current_variant.price | money }}
+  <label for="Quantity">quantity</label>
+  <input type="number" id="Quantity" name="quantity" value="1" min="1">
+  <button type="submit" name="add" id="AddToCart">Add to cart</button>
+</form>
+<div>{{ product.description }}</div>
+
+
+
+
+{% comment %} <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm">
   <select name="id" id="productSelect">
     {% for variant in product.variants %}
       {% if variant.available %}
@@ -25,5 +78,4 @@
   <label for="Quantity">quantity</label>
   <input type="number" id="Quantity" name="quantity" value="1" min="1">
   <button type="submit" name="add" id="AddToCart">Add to cart</button>
-</form>
-<div>{{ product.description }}</div>
+</form> {% endcomment %}
